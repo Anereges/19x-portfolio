@@ -5,7 +5,7 @@ import { AuthRequest } from '../types';
 
 export class ResumeController {
   // Get public resume (for visitors)
-  getPublicResume = asyncHandler(async (_req: Request, res: Response) => {
+  getPublicResume = asyncHandler(async (req: Request, res: Response) => {
     const resume = await prisma.resume.findFirst({
       where: { isPublic: true },
       include: {
@@ -21,13 +21,14 @@ export class ResumeController {
     });
 
     if (!resume) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'Resume not found'
       });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: resume
     });
@@ -37,10 +38,11 @@ export class ResumeController {
   getAdminResume = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.userId;
     if (!userId) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: 'Unauthorized'
       });
+      return;
     }
 
     const resume = await prisma.resume.findUnique({
@@ -55,13 +57,14 @@ export class ResumeController {
     });
 
     if (!resume) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'Resume not found'
       });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: resume
     });
@@ -71,10 +74,11 @@ export class ResumeController {
   upsertResume = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.userId;
     if (!userId) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: 'Unauthorized'
       });
+      return;
     }
 
     const {
@@ -113,7 +117,7 @@ export class ResumeController {
       }
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Resume saved successfully',
       data: resume
@@ -124,10 +128,11 @@ export class ResumeController {
   addExperience = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.userId;
     if (!userId) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: 'Unauthorized'
       });
+      return;
     }
 
     const {
@@ -140,10 +145,11 @@ export class ResumeController {
     });
 
     if (!resume) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'Resume not found'
       });
+      return;
     }
 
     const experience = await prisma.experience.create({
@@ -161,7 +167,7 @@ export class ResumeController {
       }
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: 'Experience added successfully',
       data: experience
@@ -178,10 +184,11 @@ export class ResumeController {
 
     const experienceId = parseInt(id as string);
     if (isNaN(experienceId)) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Invalid experience ID'
       });
+      return;
     }
 
     const experience = await prisma.experience.update({
@@ -199,7 +206,7 @@ export class ResumeController {
       }
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Experience updated successfully',
       data: experience
@@ -211,17 +218,18 @@ export class ResumeController {
     const { id } = req.params;
     const experienceId = parseInt(id as string);
     if (isNaN(experienceId)) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Invalid experience ID'
       });
+      return;
     }
 
     await prisma.experience.delete({
       where: { id: experienceId }
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Experience deleted successfully'
     });
@@ -231,10 +239,11 @@ export class ResumeController {
   addEducation = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.userId;
     if (!userId) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: 'Unauthorized'
       });
+      return;
     }
 
     const {
@@ -247,10 +256,11 @@ export class ResumeController {
     });
 
     if (!resume) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'Resume not found'
       });
+      return;
     }
 
     const education = await prisma.education.create({
@@ -268,7 +278,7 @@ export class ResumeController {
       }
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: 'Education added successfully',
       data: education
@@ -285,10 +295,11 @@ export class ResumeController {
 
     const educationId = parseInt(id as string);
     if (isNaN(educationId)) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Invalid education ID'
       });
+      return;
     }
 
     const education = await prisma.education.update({
@@ -306,7 +317,7 @@ export class ResumeController {
       }
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Education updated successfully',
       data: education
@@ -318,17 +329,18 @@ export class ResumeController {
     const { id } = req.params;
     const educationId = parseInt(id as string);
     if (isNaN(educationId)) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Invalid education ID'
       });
+      return;
     }
 
     await prisma.education.delete({
       where: { id: educationId }
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Education deleted successfully'
     });
@@ -338,10 +350,11 @@ export class ResumeController {
   addCertification = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.userId;
     if (!userId) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: 'Unauthorized'
       });
+      return;
     }
 
     const {
@@ -353,10 +366,11 @@ export class ResumeController {
     });
 
     if (!resume) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'Resume not found'
       });
+      return;
     }
 
     const certification = await prisma.certification.create({
@@ -373,7 +387,7 @@ export class ResumeController {
       }
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: 'Certification added successfully',
       data: certification
@@ -385,17 +399,18 @@ export class ResumeController {
     const { id } = req.params;
     const certificationId = parseInt(id as string);
     if (isNaN(certificationId)) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Invalid certification ID'
       });
+      return;
     }
 
     await prisma.certification.delete({
       where: { id: certificationId }
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Certification deleted successfully'
     });
@@ -405,10 +420,11 @@ export class ResumeController {
   addLanguage = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.userId;
     if (!userId) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: 'Unauthorized'
       });
+      return;
     }
 
     const { name, proficiency, order } = req.body;
@@ -418,10 +434,11 @@ export class ResumeController {
     });
 
     if (!resume) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'Resume not found'
       });
+      return;
     }
 
     const language = await prisma.language.create({
@@ -433,7 +450,7 @@ export class ResumeController {
       }
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: 'Language added successfully',
       data: language
@@ -445,17 +462,18 @@ export class ResumeController {
     const { id } = req.params;
     const languageId = parseInt(id as string);
     if (isNaN(languageId)) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Invalid language ID'
       });
+      return;
     }
 
     await prisma.language.delete({
       where: { id: languageId }
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Language deleted successfully'
     });
@@ -465,10 +483,11 @@ export class ResumeController {
   addInterest = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.userId;
     if (!userId) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: 'Unauthorized'
       });
+      return;
     }
 
     const { name, icon, order } = req.body;
@@ -478,10 +497,11 @@ export class ResumeController {
     });
 
     if (!resume) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: 'Resume not found'
       });
+      return;
     }
 
     const interest = await prisma.interest.create({
@@ -493,7 +513,7 @@ export class ResumeController {
       }
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: 'Interest added successfully',
       data: interest
@@ -505,17 +525,18 @@ export class ResumeController {
     const { id } = req.params;
     const interestId = parseInt(id as string);
     if (isNaN(interestId)) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Invalid interest ID'
       });
+      return;
     }
 
     await prisma.interest.delete({
       where: { id: interestId }
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Interest deleted successfully'
     });

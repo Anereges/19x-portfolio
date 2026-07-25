@@ -5,13 +5,13 @@ import { AuthRequest } from '../types';
 
 export class SocialController {
   // Get all active social media accounts
-  getSocialLinks = asyncHandler(async (_req: Request, res: Response) => {
+  getSocialLinks = asyncHandler(async (req: Request, res: Response) => {
     const socialLinks = await prisma.socialMedia.findMany({
       where: { active: true },
       orderBy: { order: 'asc' },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: socialLinks,
     });
@@ -33,7 +33,7 @@ export class SocialController {
       },
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: 'Social media account created successfully',
       data: socialLink,
@@ -46,10 +46,11 @@ export class SocialController {
     const socialLinkId = parseInt(id as string);
     
     if (isNaN(socialLinkId)) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Invalid social media ID'
       });
+      return;
     }
 
     const { platform, name, url, icon, followers, active, order } = req.body;
@@ -67,7 +68,7 @@ export class SocialController {
       },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Social media account updated successfully',
       data: socialLink,
@@ -80,17 +81,18 @@ export class SocialController {
     const socialLinkId = parseInt(id as string);
     
     if (isNaN(socialLinkId)) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Invalid social media ID'
       });
+      return;
     }
 
     await prisma.socialMedia.delete({
       where: { id: socialLinkId },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Social media account deleted successfully',
     });
