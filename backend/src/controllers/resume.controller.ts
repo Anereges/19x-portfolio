@@ -5,7 +5,7 @@ import { AuthRequest } from '../types';
 
 export class ResumeController {
   // Get public resume (for visitors)
-  getPublicResume = asyncHandler(async (req: Request, res: Response) => {
+  getPublicResume = asyncHandler(async (_req: Request, res: Response) => {
     const resume = await prisma.resume.findFirst({
       where: { isPublic: true },
       include: {

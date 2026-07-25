@@ -5,7 +5,7 @@ import { AuthRequest } from '../types';
 
 export class SocialController {
   // Get all active social media accounts
-  getSocialLinks = asyncHandler(async (req: Request, res: Response) => {
+  getSocialLinks = asyncHandler(async (_req: Request, res: Response) => {
     const socialLinks = await prisma.socialMedia.findMany({
       where: { active: true },
       orderBy: { order: 'asc' },
