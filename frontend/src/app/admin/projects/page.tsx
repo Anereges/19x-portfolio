@@ -1,12 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useThemeStore } from '@/store/portfolioStore';
 import { adminApi } from '@/lib/api/admin';
 import { Project } from '@/types';
-import { FaPlus, FaEdit, FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
-import Link from 'next/link';
+import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 
 export default function AdminProjectsPage() {
   const router = useRouter();
@@ -15,11 +14,7 @@ export default function AdminProjectsPage() {
   const { theme } = useThemeStore();
   const isDark = theme === 'dark';
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       const response = await adminApi.getProjects();
       if (response.success && response.data) {
@@ -30,7 +25,34 @@ export default function AdminProjectsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadProjects = async () => {
+      try {
+        const response = await adminApi.getProjects();
+        if (isMounted && response.success && response.data) {
+          setProjects(response.data);
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error fetching projects:', error);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadProjects();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this project?')) return;
