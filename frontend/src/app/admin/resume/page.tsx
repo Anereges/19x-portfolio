@@ -18,7 +18,7 @@ const defaultResume: Partial<Resume> = {
   github: '',
   linkedin: '',
   summary: '',
-  avatarUrl: '',
+ profileImage: '',
   isPublic: true,
 };
 
