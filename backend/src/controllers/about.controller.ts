@@ -5,7 +5,7 @@ import { AuthRequest } from '../types';
 
 export class AboutController {
   // Get public about (for visitors)
-  getPublicAbout = asyncHandler(async (req: Request, res: Response) => {
+  getPublicAbout = asyncHandler(async (_req: Request, res: Response) => {
     const about = await prisma.about.findFirst({
       where: { isPublic: true },
     });
@@ -17,7 +17,7 @@ export class AboutController {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: {
         ...about,
@@ -52,7 +52,7 @@ export class AboutController {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: {
         ...about,
@@ -124,7 +124,7 @@ export class AboutController {
       }
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'About saved successfully',
       data: about

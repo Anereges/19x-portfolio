@@ -38,7 +38,7 @@ export class BlogController {
       }
     });
 
-    res.status(200).json({ 
+    return res.status(200).json({ 
       success: true, 
       count: posts.length, 
       data: posts 
@@ -73,7 +73,7 @@ export class BlogController {
       });
     }
 
-    res.status(200).json({ 
+    return res.status(200).json({ 
       success: true, 
       data: post 
     });
@@ -109,7 +109,7 @@ export class BlogController {
       }
     });
 
-    res.status(201).json({ 
+    return res.status(201).json({ 
       success: true, 
       message: 'Post created successfully', 
       data: post 
@@ -147,7 +147,7 @@ export class BlogController {
       }
     });
 
-    res.status(200).json({ 
+    return res.status(200).json({ 
       success: true, 
       message: 'Post updated successfully', 
       data: post 
@@ -182,7 +182,7 @@ export class BlogController {
       where: { id: postId } 
     });
     
-    res.status(200).json({ 
+    return res.status(200).json({ 
       success: true, 
       message: 'Post deleted successfully' 
     });

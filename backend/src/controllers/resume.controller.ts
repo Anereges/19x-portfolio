@@ -79,7 +79,7 @@ export class ResumeController {
 
     const {
       fullName, title, email, phone, location, website,
-      github, linkedin, summary, avatarUrl, isPublic
+      github, linkedin, summary, profileImage, isPublic
     } = req.body;
 
     const resume = await prisma.resume.upsert({
@@ -94,7 +94,7 @@ export class ResumeController {
         github,
         linkedin,
         summary,
-        avatarUrl,
+        profileImage: profileImage || '',
         isPublic: isPublic !== undefined ? isPublic : true
       },
       create: {
@@ -108,7 +108,7 @@ export class ResumeController {
         github,
         linkedin,
         summary,
-        avatarUrl,
+        profileImage: profileImage || '',
         isPublic: isPublic !== undefined ? isPublic : true
       }
     });

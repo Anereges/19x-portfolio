@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
 import prisma from '../prisma/client';
 import { asyncHandler } from '../utils/errorHandler';
+import { AuthRequest } from '../types';
 
 export class SocialController {
   // Get all active social media accounts
-  getSocialLinks = asyncHandler(async (req: Request, res: Response) => {
+  getSocialLinks = asyncHandler(async (_req: Request, res: Response) => {
     const socialLinks = await prisma.socialMedia.findMany({
       where: { active: true },
       orderBy: { order: 'asc' },
@@ -17,7 +18,7 @@ export class SocialController {
   });
 
   // Create social media account (admin only)
-  createSocialLink = asyncHandler(async (req: Request, res: Response) => {
+  createSocialLink = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { platform, name, url, icon, followers, active, order } = req.body;
 
     const socialLink = await prisma.socialMedia.create({
@@ -40,12 +41,20 @@ export class SocialController {
   });
 
   // Update social media account (admin only)
-  updateSocialLink = asyncHandler(async (req: Request, res: Response) => {
+  updateSocialLink = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
     const { platform, name, url, icon, followers, active, order } = req.body;
 
+    const socialLinkId = parseInt(id as string);
+    if (isNaN(socialLinkId)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid social media ID'
+      });
+    }
+
     const socialLink = await prisma.socialMedia.update({
-      where: { id: parseInt(id) },
+      where: { id: socialLinkId },
       data: {
         platform,
         name,
@@ -65,11 +74,19 @@ export class SocialController {
   });
 
   // Delete social media account (admin only)
-  deleteSocialLink = asyncHandler(async (req: Request, res: Response) => {
+  deleteSocialLink = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
 
+    const socialLinkId = parseInt(id as string);
+    if (isNaN(socialLinkId)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid social media ID'
+      });
+    }
+
     await prisma.socialMedia.delete({
-      where: { id: parseInt(id) },
+      where: { id: socialLinkId },
     });
 
     res.status(200).json({

@@ -41,10 +41,8 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/resume', resumeRoutes);
 app.use('/api/about', aboutRoutes);
 
-
-
 // Root endpoint
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.json({
     name: 'Portfolio Platform API',
     version: '1.0.0',
@@ -56,13 +54,15 @@ app.get('/', (req, res) => {
       users: '/api/users',
       blog: '/api/blog',
       social: '/api/social',
-      admin: '/api/admin'
+      admin: '/api/admin',
+      resume: '/api/resume',
+      about: '/api/about'
     }
   });
 });
 
 // 404 handler
-app.use((req, res) => {
+app.use((_req, res) => {
   res.status(404).json({
     success: false,
     error: 'Route not found'

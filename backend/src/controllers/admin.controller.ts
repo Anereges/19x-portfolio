@@ -1,11 +1,11 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import prisma from '../prisma/client';
 import { asyncHandler } from '../utils/errorHandler';
 import { AuthRequest } from '../types';
 
 export class AdminController {
   // Get dashboard stats
-  getStats = asyncHandler(async (req: AuthRequest, res: Response) => {
+  getStats = asyncHandler(async (_req: AuthRequest, res: Response) => {
     const [projects, blogPosts, users] = await Promise.all([
       prisma.project.count(),
       prisma.blogPost.count(),
@@ -46,7 +46,7 @@ export class AdminController {
   });
 
   // Get all projects (admin)
-  getProjects = asyncHandler(async (req: AuthRequest, res: Response) => {
+  getProjects = asyncHandler(async (_req: AuthRequest, res: Response) => {
     const projects = await prisma.project.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
@@ -63,7 +63,7 @@ export class AdminController {
   });
 
   // Get all blog posts (admin)
-  getBlogPosts = asyncHandler(async (req: AuthRequest, res: Response) => {
+  getBlogPosts = asyncHandler(async (_req: AuthRequest, res: Response) => {
     const posts = await prisma.blogPost.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
@@ -80,7 +80,7 @@ export class AdminController {
   });
 
   // Get all users (admin)
-  getUsers = asyncHandler(async (req: AuthRequest, res: Response) => {
+  getUsers = asyncHandler(async (_req: AuthRequest, res: Response) => {
     const users = await prisma.user.findMany({
       select: {
         id: true,
