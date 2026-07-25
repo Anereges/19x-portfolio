@@ -11,7 +11,7 @@ export class SocialController {
       orderBy: { order: 'asc' },
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: socialLinks,
     });
@@ -33,7 +33,7 @@ export class SocialController {
       },
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: 'Social media account created successfully',
       data: socialLink,
@@ -43,15 +43,16 @@ export class SocialController {
   // Update social media account (admin only)
   updateSocialLink = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
-    const { platform, name, url, icon, followers, active, order } = req.body;
-
     const socialLinkId = parseInt(id as string);
+    
     if (isNaN(socialLinkId)) {
       return res.status(400).json({
         success: false,
         error: 'Invalid social media ID'
       });
     }
+
+    const { platform, name, url, icon, followers, active, order } = req.body;
 
     const socialLink = await prisma.socialMedia.update({
       where: { id: socialLinkId },
@@ -66,7 +67,7 @@ export class SocialController {
       },
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Social media account updated successfully',
       data: socialLink,
@@ -76,8 +77,8 @@ export class SocialController {
   // Delete social media account (admin only)
   deleteSocialLink = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
-
     const socialLinkId = parseInt(id as string);
+    
     if (isNaN(socialLinkId)) {
       return res.status(400).json({
         success: false,
@@ -89,7 +90,7 @@ export class SocialController {
       where: { id: socialLinkId },
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Social media account deleted successfully',
     });

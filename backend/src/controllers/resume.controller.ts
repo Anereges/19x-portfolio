@@ -5,7 +5,7 @@ import { AuthRequest } from '../types';
 
 export class ResumeController {
   // Get public resume (for visitors)
-  getPublicResume = asyncHandler(async (req: Request, res: Response) => {
+  getPublicResume = asyncHandler(async (_req: Request, res: Response) => {
     const resume = await prisma.resume.findFirst({
       where: { isPublic: true },
       include: {
@@ -27,7 +27,7 @@ export class ResumeController {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: resume
     });
@@ -61,7 +61,7 @@ export class ResumeController {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: resume
     });
@@ -99,21 +99,21 @@ export class ResumeController {
       },
       create: {
         userId: userId,
-        fullName,
-        title,
-        email,
-        phone,
-        location,
-        website,
-        github,
-        linkedin,
-        summary,
+        fullName: fullName || '',
+        title: title || '',
+        email: email || '',
+        phone: phone || '',
+        location: location || '',
+        website: website || '',
+        github: github || '',
+        linkedin: linkedin || '',
+        summary: summary || '',
         profileImage: profileImage || '',
         isPublic: isPublic !== undefined ? isPublic : true
       }
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Resume saved successfully',
       data: resume
@@ -161,7 +161,7 @@ export class ResumeController {
       }
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: 'Experience added successfully',
       data: experience
@@ -171,19 +171,18 @@ export class ResumeController {
   // Update Experience
   updateExperience = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
-    const experienceId = parseInt(id as string, 10);
-    
+    const {
+      company, position, location, startDate, endDate,
+      current, description, technologies, order
+    } = req.body;
+
+    const experienceId = parseInt(id as string);
     if (isNaN(experienceId)) {
       return res.status(400).json({
         success: false,
         error: 'Invalid experience ID'
       });
     }
-
-    const {
-      company, position, location, startDate, endDate,
-      current, description, technologies, order
-    } = req.body;
 
     const experience = await prisma.experience.update({
       where: { id: experienceId },
@@ -200,7 +199,7 @@ export class ResumeController {
       }
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Experience updated successfully',
       data: experience
@@ -210,8 +209,7 @@ export class ResumeController {
   // Delete Experience
   deleteExperience = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
-    const experienceId = parseInt(id as string, 10);
-    
+    const experienceId = parseInt(id as string);
     if (isNaN(experienceId)) {
       return res.status(400).json({
         success: false,
@@ -223,7 +221,7 @@ export class ResumeController {
       where: { id: experienceId }
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Experience deleted successfully'
     });
@@ -270,7 +268,7 @@ export class ResumeController {
       }
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: 'Education added successfully',
       data: education
@@ -280,19 +278,18 @@ export class ResumeController {
   // Update Education
   updateEducation = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
-    const educationId = parseInt(id as string, 10);
-    
+    const {
+      institution, degree, field, location, startDate,
+      endDate, current, description, order
+    } = req.body;
+
+    const educationId = parseInt(id as string);
     if (isNaN(educationId)) {
       return res.status(400).json({
         success: false,
         error: 'Invalid education ID'
       });
     }
-
-    const {
-      institution, degree, field, location, startDate,
-      endDate, current, description, order
-    } = req.body;
 
     const education = await prisma.education.update({
       where: { id: educationId },
@@ -309,7 +306,7 @@ export class ResumeController {
       }
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Education updated successfully',
       data: education
@@ -319,8 +316,7 @@ export class ResumeController {
   // Delete Education
   deleteEducation = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
-    const educationId = parseInt(id as string, 10);
-    
+    const educationId = parseInt(id as string);
     if (isNaN(educationId)) {
       return res.status(400).json({
         success: false,
@@ -332,7 +328,7 @@ export class ResumeController {
       where: { id: educationId }
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Education deleted successfully'
     });
@@ -377,7 +373,7 @@ export class ResumeController {
       }
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: 'Certification added successfully',
       data: certification
@@ -387,8 +383,7 @@ export class ResumeController {
   // Delete Certification
   deleteCertification = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
-    const certificationId = parseInt(id as string, 10);
-    
+    const certificationId = parseInt(id as string);
     if (isNaN(certificationId)) {
       return res.status(400).json({
         success: false,
@@ -400,7 +395,7 @@ export class ResumeController {
       where: { id: certificationId }
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Certification deleted successfully'
     });
@@ -438,7 +433,7 @@ export class ResumeController {
       }
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: 'Language added successfully',
       data: language
@@ -448,8 +443,7 @@ export class ResumeController {
   // Delete Language
   deleteLanguage = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
-    const languageId = parseInt(id as string, 10);
-    
+    const languageId = parseInt(id as string);
     if (isNaN(languageId)) {
       return res.status(400).json({
         success: false,
@@ -461,7 +455,7 @@ export class ResumeController {
       where: { id: languageId }
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Language deleted successfully'
     });
@@ -499,7 +493,7 @@ export class ResumeController {
       }
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: 'Interest added successfully',
       data: interest
@@ -509,8 +503,7 @@ export class ResumeController {
   // Delete Interest
   deleteInterest = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
-    const interestId = parseInt(id as string, 10);
-    
+    const interestId = parseInt(id as string);
     if (isNaN(interestId)) {
       return res.status(400).json({
         success: false,
@@ -522,7 +515,7 @@ export class ResumeController {
       where: { id: interestId }
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Interest deleted successfully'
     });
