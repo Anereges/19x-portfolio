@@ -1,59 +1,53 @@
-// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// User model for admin authentication
 model User {
-  id          Int      @id @default(autoincrement())
-  email       String   @unique
-  username    String   @unique
-  password    String
-  role        String   @default("ADMIN")
-  firstName   String
-  lastName    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  projects    Project[] @relation("ProjectCreator")
-  blogPosts   BlogPost[] @relation("BlogAuthor")
-  resume      Resume?   // One-to-one relation with Resume
-  about       About?    // One-to-one relation with About
-  
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
+  username  String     @unique
+  password  String
+  role      String     @default("ADMIN")
+  firstName String
+  lastName  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  about     About?
+  blogPosts BlogPost[] @relation("BlogAuthor")
+  projects  Project[]  @relation("ProjectCreator")
+  resume    Resume?
+
   @@map("users")
 }
 
-// Project model - supports both portfolio modes
 model Project {
-  id          Int      @id @default(autoincrement())
-  title       String
-  slug        String   @unique
-  description String
-  category    String   @default("SOFTWARE")
+  id           Int      @id @default(autoincrement())
+  title        String
+  slug         String   @unique
+  description  String
+  category     String   @default("SOFTWARE")
   technologies String   @default("[]")
-  githubUrl   String?
-  demoUrl     String?
-  imageUrl    String?
-  featured    Boolean  @default(false)
-  published   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  createdBy   User     @relation("ProjectCreator", fields: [createdById], references: [id])
-  createdById Int
-  
+  githubUrl    String?
+  demoUrl      String?
+  imageUrl     String?
+  featured     Boolean  @default(false)
+  published    Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  createdById  Int
+  createdBy    User     @relation("ProjectCreator", fields: [createdById], references: [id])
+
   @@index([category])
   @@index([published])
   @@index([featured])
   @@map("projects")
 }
 
-// Blog Post model - SQLite compatible
 model BlogPost {
   id          Int      @id @default(autoincrement())
   title       String
@@ -68,207 +62,160 @@ model BlogPost {
   views       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
   createdById Int
   createdBy   User     @relation("BlogAuthor", fields: [createdById], references: [id])
-  
+
   @@index([category])
   @@index([published])
   @@index([createdAt])
   @@map("blog_posts")
 }
 
-// Social Media model - SQLite compatible
 model SocialMedia {
-  id          Int      @id @default(autoincrement())
-  platform    String   @unique
-  name        String
-  url         String
-  icon        String?
-  followers   Int      @default(0)
-  active      Boolean  @default(true)
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  id        Int      @id @default(autoincrement())
+  platform  String   @unique
+  name      String
+  url       String
+  icon      String?
+  followers Int      @default(0)
+  active    Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("social_media")
 }
 
-// Resume model - one-to-one with User
 model Resume {
-  id          Int      @id @default(autoincrement())
-  userId      Int      @unique
-  user        User     @relation(fields: [userId], references: [id])
-  
-  // Personal Info
-  fullName    String
-  title       String
-  email       String
-  phone       String?
-  location    String?
-  website     String?
-  github      String?
-  linkedin    String?
-  
-  // Professional Summary
-  summary     String
-  
-  // Profile Image
-  profileImage String?
-  
-  // Settings
-  isPublic    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  experiences Experience[]
-  educations  Education[]
+  id             Int             @id @default(autoincrement())
+  userId         Int             @unique
+  fullName       String
+  title          String
+  email          String
+  phone          String?
+  location       String?
+  website        String?
+  github         String?
+  linkedin       String?
+  summary        String
+  profileImage   String?
+  isPublic       Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
   certifications Certification[]
-  languages   Language[]
-  interests   Interest[]
-  
+  educations     Education[]
+  experiences    Experience[]
+  interests      Interest[]
+  languages      Language[]
+  user           User            @relation(fields: [userId], references: [id])
+
   @@map("resumes")
 }
 
 model Experience {
-  id          Int      @id @default(autoincrement())
-  resumeId    Int
-  resume      Resume   @relation(fields: [resumeId], references: [id])
-  
-  company     String
-  position    String
-  location    String?
-  startDate   DateTime
-  endDate     DateTime?
-  current     Boolean  @default(false)
-  description String
-  technologies String   @default("[]")
-  
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  id           Int       @id @default(autoincrement())
+  resumeId     Int
+  company      String
+  position     String
+  location     String?
+  startDate    DateTime
+  endDate      DateTime?
+  current      Boolean   @default(false)
+  description  String
+  technologies String    @default("[]")
+  order        Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  resume       Resume    @relation(fields: [resumeId], references: [id])
+
   @@map("experiences")
 }
 
 model Education {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   resumeId    Int
-  resume      Resume   @relation(fields: [resumeId], references: [id])
-  
   institution String
   degree      String
   field       String
   location    String?
   startDate   DateTime
   endDate     DateTime?
-  current     Boolean  @default(false)
+  current     Boolean   @default(false)
   description String?
-  
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  resume      Resume    @relation(fields: [resumeId], references: [id])
+
   @@map("educations")
 }
 
 model Certification {
-  id          Int      @id @default(autoincrement())
-  resumeId    Int
-  resume      Resume   @relation(fields: [resumeId], references: [id])
-  
-  name        String
-  issuer      String
-  date        DateTime?
-  expiryDate  DateTime?
+  id           Int       @id @default(autoincrement())
+  resumeId     Int
+  name         String
+  issuer       String
+  date         DateTime?
+  expiryDate   DateTime?
   credentialId String?
-  url         String?
-  logo        String?
-  
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  url          String?
+  logo         String?
+  order        Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  resume       Resume    @relation(fields: [resumeId], references: [id])
+
   @@map("certifications")
 }
 
 model Language {
   id          Int      @id @default(autoincrement())
   resumeId    Int
-  resume      Resume   @relation(fields: [resumeId], references: [id])
-  
   name        String
-  proficiency String   // Native, Fluent, Professional, Conversational, Basic
+  proficiency String
   order       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+  resume      Resume   @relation(fields: [resumeId], references: [id])
+
   @@map("languages")
 }
 
 model Interest {
-  id          Int      @id @default(autoincrement())
-  resumeId    Int
-  resume      Resume   @relation(fields: [resumeId], references: [id])
-  
-  name        String
-  icon        String?
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  id        Int      @id @default(autoincrement())
+  resumeId  Int
+  name      String
+  icon      String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  resume    Resume   @relation(fields: [resumeId], references: [id])
+
   @@map("interests")
 }
 
-// ============ ABOUT MODEL ============
-// Admin controlled About page content
-
 model About {
-  id          Int      @id @default(autoincrement())
-  userId      Int      @unique
-  user        User     @relation(fields: [userId], references: [id])
-  
-  // Personal Info
-  fullName    String   @default("")
-  title       String   @default("")
-  bio         String   @default("")  // Removed @db.Text - SQLite doesn't support it
-  location    String?  @default("")
-  profileImage String? // Profile photo URL
-  
-  // Social Links
-  githubUrl   String?  @default("")
-  linkedinUrl String?  @default("")
-  twitterUrl  String?  @default("")
-  leetcodeUrl String?  @default("")
-  
-  // Journey (stored as JSON array)
-  // Format: [{"year":"2019","title":"Started Coding","desc":"Began journey with Python","icon":"FaGraduationCap"}]
-  journey     String   @default("[]")
-  
-  // Core Skills (stored as JSON array)
-  // Format: [{"name":"React/Next.js","level":95,"icon":"⚛️"}]
-  skills      String   @default("[]")
-  
-  // Achievements (stored as JSON array)
-  // Format: [{"icon":"FaTrophy","text":"Best Innovation Award 2024","color":"text-yellow-500"}]
+  id           Int      @id @default(autoincrement())
+  userId       Int      @unique
+  fullName     String   @default("")
+  title        String   @default("")
+  bio          String   @default("")
+  location     String?  @default("")
+  profileImage String?
+  githubUrl    String?  @default("")
+  linkedinUrl  String?  @default("")
+  twitterUrl   String?  @default("")
+  leetcodeUrl  String?  @default("")
+  journey      String   @default("[]")
+  skills       String   @default("[]")
   achievements String   @default("[]")
-  
-  // Impact Numbers / Stats (stored as JSON array)
-  // Format: [{"label":"Projects","value":"15+","icon":"🚀"}]
-  stats       String   @default("[]")
-  
-  // Key Strengths (stored as JSON array)
-  // Format: [{"icon":"FaCode","title":"Full-Stack Development","desc":"Building end-to-end applications","color":"from-blue-500 to-purple-500"}]
-  strengths   String   @default("[]")
-  
-  // Expertise Areas (stored as JSON array)
-  // Format: [{"category":"Cybersecurity","items":["Blue Team Operations","Incident Response"]}]
-  expertise   String   @default("[]")
-  
-  // Settings
-  isPublic    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  stats        String   @default("[]")
+  strengths    String   @default("[]")
+  expertise    String   @default("[]")
+  isPublic     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
+
   @@map("about")
 }
