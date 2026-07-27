@@ -5,6 +5,8 @@ import { BlogPost } from '@/types';
 import { blogApi } from '@/lib/api/blog';
 import { BlogCard } from './BlogCard';
 import { useThemeStore } from '@/store/portfolioStore';
+import { motion } from 'framer-motion';
+import { FaRocket, FaSadCry } from 'react-icons/fa';
 
 interface BlogListProps {
   category?: string;
@@ -44,10 +46,16 @@ export const BlogList = ({ category, searchTerm = '' }: BlogListProps) => {
 
   if (loading) {
     return (
-      <div className="text-center py-12">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        <p className={`mt-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-          Loading posts...
+      <div className="text-center py-16">
+        <div className="inline-block">
+          <motion.div 
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            className="rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mx-auto"
+          ></motion.div>
+        </div>
+        <p className={`mt-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+          📚 Loading amazing articles...
         </p>
       </div>
     );
@@ -55,39 +63,75 @@ export const BlogList = ({ category, searchTerm = '' }: BlogListProps) => {
 
   if (error) {
     return (
-      <div className="text-center py-12 text-red-500">
-        <p>{error}</p>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-center py-16"
+      >
+        <div className="text-6xl mb-4">😅</div>
+        <p className={`text-lg font-semibold ${isDark ? 'text-red-400' : 'text-red-500'}`}>
+          {error}
+        </p>
         <button
           onClick={() => window.location.reload()}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="mt-4 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:shadow-lg transition-all"
         >
-          Retry
+          🔄 Try Again
         </button>
-      </div>
+      </motion.div>
     );
   }
 
   if (posts.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-4xl mb-4">📝</p>
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="text-center py-16"
+      >
+        <div className="text-7xl mb-4">🔍</div>
         <h3 className={`text-2xl font-bold mb-2 ${
           isDark ? 'text-white' : 'text-gray-900'
         }`}>
-          No posts yet
+          No posts found
         </h3>
-        <p className={isDark ? 'text-gray-400' : 'text-gray-500'}>
-          {searchTerm ? 'Try adjusting your search' : 'Check back later for new content'}
+        <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
+          {searchTerm 
+            ? `No results for "${searchTerm}"` 
+            : 'Check back later for new content'}
         </p>
-      </div>
+        {searchTerm && (
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:shadow-lg transition-all"
+          >
+            Clear Search
+          </button>
+        )}
+      </motion.div>
     );
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+    >
       {posts.map((post) => (
         <BlogCard key={post.id} post={post} />
       ))}
-    </div>
+    </motion.div>
   );
 };
