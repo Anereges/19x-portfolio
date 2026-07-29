@@ -4,7 +4,7 @@ import { Project } from '@/types';
 import { useThemeStore } from '@/store/portfolioStore';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { FaGithub, FaExternalLinkAlt, FaArrowRight } from 'react-icons/fa';
+import { FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
 import { useState } from 'react';
 
 interface ProjectCardProps {
@@ -18,17 +18,16 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
   const [imageLoading, setImageLoading] = useState(true);
 
   return (
-    <motion.div
-      whileHover={{ y: -8 }}
-      whileTap={{ scale: 0.98 }}
-      className={`rounded-xl shadow-lg overflow-hidden transition-all cursor-pointer ${
-        isDark ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:shadow-2xl'
-      }`}
-    >
-      {/* Make the whole card clickable for easy access on mobile */}
-      <Link href={`/projects/${project.slug}`} className="block">
+    <Link href={`/projects/${project.slug}`} className="block h-full">
+      <motion.div
+        whileHover={{ y: -8 }}
+        whileTap={{ scale: 0.98 }}
+        className={`rounded-xl shadow-lg overflow-hidden transition-all cursor-pointer h-full flex flex-col ${
+          isDark ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:shadow-2xl'
+        }`}
+      >
         {/* Project Image */}
-        <div className={`h-48 flex items-center justify-center overflow-hidden relative ${
+        <div className={`h-48 flex items-center justify-center overflow-hidden relative flex-shrink-0 ${
           isDark ? 'bg-gray-700' : 'bg-gray-200'
         }`}>
           {project.imageUrl && !imageError ? (
@@ -57,18 +56,18 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
             </span>
           )}
           
-          {/* Mobile-friendly "View Details" badge overlay */}
+          {/* Mobile "Tap to view" badge */}
           <div className="absolute bottom-3 right-3 md:hidden">
             <span className={`px-3 py-1.5 text-xs font-semibold rounded-full backdrop-blur-sm ${
               isDark ? 'bg-black/60 text-white' : 'bg-white/80 text-gray-900'
             } shadow-lg flex items-center gap-1.5`}>
-              Tap to view <FaArrowRight size={10} />
+              👆 Tap
             </span>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-4 md:p-6">
+        <div className="p-4 md:p-6 flex flex-col flex-grow">
           <div className="flex items-center gap-2 mb-3 flex-wrap">
             <span className={`text-xs px-3 py-1 rounded-full ${
               project.category === 'SOFTWARE'
@@ -90,7 +89,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
             {project.title}
           </h3>
           
-          <p className={`text-sm mb-4 line-clamp-3 ${
+          <p className={`text-sm mb-4 line-clamp-3 flex-grow ${
             isDark ? 'text-gray-400' : 'text-gray-600'
           }`}>
             {project.description}
@@ -114,24 +113,21 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
             )}
           </div>
 
-          {/* Desktop View Details Link */}
-          <div className="hidden md:flex items-center justify-between">
-            <span
-              className={`text-sm font-medium transition flex items-center gap-1 ${
-                project.category === 'SOFTWARE'
-                  ? 'text-blue-500 hover:text-blue-600'
-                  : 'text-green-500 hover:text-green-600'
-              }`}
-            >
+          {/* Links - These are separate so they don't interfere with card click */}
+          <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-200/30 dark:border-gray-700/30">
+            <span className={`text-sm font-medium flex items-center gap-1 ${
+              project.category === 'SOFTWARE'
+                ? 'text-blue-500'
+                : 'text-green-500'
+            }`}>
               View Details →
             </span>
-            <div className="flex gap-3">
+            <div className="flex gap-3" onClick={(e) => e.stopPropagation()}>
               {project.githubUrl && (
                 <a
                   href={project.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
                   className={`transition ${
                     isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'
                   }`}
@@ -145,7 +141,6 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
                   href={project.demoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
                   className={`transition ${
                     isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'
                   }`}
@@ -156,20 +151,8 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
               )}
             </div>
           </div>
-
-          {/* Mobile: Full width "View Details" button */}
-          <div className="md:hidden mt-4">
-            <span className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-semibold transition ${
-              project.category === 'SOFTWARE'
-                ? 'bg-blue-500 text-white hover:bg-blue-600'
-                : 'bg-green-500 text-white hover:bg-green-600'
-            }`}>
-              View Project Details
-              <FaArrowRight size={14} />
-            </span>
-          </div>
         </div>
-      </Link>
-    </motion.div>
+      </motion.div>
+    </Link>
   );
 };
