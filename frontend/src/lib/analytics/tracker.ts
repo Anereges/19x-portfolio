@@ -1,5 +1,7 @@
 'use client';
 
+import { apiClient } from '../api/client';
+
 // Generate or get session ID
 const getSessionId = () => {
   let sessionId = localStorage.getItem('visitor_session_id');
@@ -37,21 +39,18 @@ export const trackVisitor = async (page: string, path: string) => {
     const source = getSource();
     const referrer = document.referrer || '';
     
-    await fetch('/api/analytics/track', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Session-Id': sessionId
-      },
-      body: JSON.stringify({
-        sessionId,
-        source,
-        referrer,
-        page,
-        path
-      })
+    // Use apiClient instead of fetch - this will use the correct base URL
+    await apiClient.post('/analytics/track', {
+      sessionId,
+      source,
+      referrer,
+      page,
+      path
     });
   } catch (error) {
-    console.error('Error tracking visitor:', error);
+    // Don't log errors in production to avoid console spam
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error tracking visitor:', error);
+    }
   }
 };
