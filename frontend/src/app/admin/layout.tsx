@@ -9,7 +9,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
   FaHome, FaProjectDiagram, FaBlog, FaUsers, 
-  FaCog, FaSignOutAlt, FaPlus, FaUser, FaUserCircle, FaInfoCircle
+  FaCog, FaSignOutAlt, FaPlus, FaUser, FaUserCircle, FaInfoCircle,
+  FaChartLine  // Add this import
 } from 'react-icons/fa';
 
 export default function AdminLayout({
@@ -27,7 +28,8 @@ export default function AdminLayout({
     { href: '/admin/projects', label: 'Projects', icon: FaProjectDiagram },
     { href: '/admin/blog', label: 'Blog Posts', icon: FaBlog },
     { href: '/admin/resume', label: 'Resume', icon: FaUser },
-    { href: '/admin/about', label: 'About', icon: FaInfoCircle },
+    { href: '/admin/about', label: 'About', icon: FaUserCircle },
+    { href: '/admin/analytics', label: 'Analytics', icon: FaChartLine },
     { href: '/admin/users', label: 'Users', icon: FaUsers },
     { href: '/admin/settings', label: 'Settings', icon: FaCog },
   ];
