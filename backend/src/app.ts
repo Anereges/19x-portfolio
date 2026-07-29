@@ -17,6 +17,8 @@ import socialRoutes from './routes/social.routes';
 import adminRoutes from './routes/admin.routes';
 import resumeRoutes from './routes/resume.routes';
 import aboutRoutes from './routes/about.routes';
+import analyticsRoutes from './routes/analytics.routes';
+
 
 const app: Application = express();
 
@@ -40,7 +42,7 @@ app.use('/api/social', socialRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/resume', resumeRoutes);
 app.use('/api/about', aboutRoutes);
-
+app.use('/api/analytics', analyticsRoutes);
 // Root endpoint
 app.get('/', (_req, res) => {
   res.json({
