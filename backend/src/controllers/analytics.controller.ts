@@ -200,7 +200,8 @@ export class AnalyticsController {
   });
 
   // Get visitor sources breakdown
-  getSources = asyncHandler(async (req: AuthRequest, res: Response) => {
+  // FIXED: Changed 'req' to '_req' to indicate it's intentionally unused
+  getSources = asyncHandler(async (_req: AuthRequest, res: Response) => {
     const sources = await prisma.visitor.groupBy({
       by: ['source'],
       _count: { source: true },
