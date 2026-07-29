@@ -2,10 +2,18 @@ import { Request, Response } from 'express';
 import prisma from '../prisma/client';
 import { asyncHandler } from '../utils/errorHandler';
 import { AuthRequest } from '../types';
-import * as geoip from 'geoip-lite';
+
+// Make geoip-lite optional with require
+let geoip: any;
+try {
+  geoip = require('geoip-lite');
+} catch (error) {
+  console.warn('geoip-lite not available, IP geolocation disabled');
+}
 
 // Get visitor country from IP
 const getCountry = (ip: string) => {
+  if (!geoip) return 'Unknown';
   try {
     const geo = geoip.lookup(ip);
     return geo?.country || 'Unknown';
@@ -200,7 +208,6 @@ export class AnalyticsController {
   });
 
   // Get visitor sources breakdown
-  // FIXED: Changed 'req' to '_req' to indicate it's intentionally unused
   getSources = asyncHandler(async (_req: AuthRequest, res: Response) => {
     const sources = await prisma.visitor.groupBy({
       by: ['source'],
